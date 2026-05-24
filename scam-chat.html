@@ -492,13 +492,13 @@ window.createPost=async function(){
 
 // ── listen posts ──────────────────────────────────────
 function listenPosts(){
-  const q=query(ref(db,'posts'),orderByChild('ts'),limitToLast(60));
+  const q=query(ref(db,'posts'),limitToLast(60));
   onValue(q,snap=>{
     const posts=[];snap.forEach(c=>posts.push({id:c.key,...c.val()}));
-    posts.reverse();
+    
     const container=document.getElementById('posts-container');
     postsMap={};
-    posts.forEach(p=>postsMap[p.id]=p);
+    posts.sort((a,b)=>(b.ts||0)-(a.ts||0));posts.forEach(p=>postsMap[p.id]=p);
     if(!posts.length){container.innerHTML='<div class="empty-state">Пока нет постов 👀<br>Напиши первым!</div>';return;}
     container.innerHTML='';
     posts.forEach(p=>container.appendChild(buildPostEl(p)));
